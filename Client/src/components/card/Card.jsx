@@ -1,7 +1,7 @@
 import styles from "./Card.module.css";
 import { Link } from "react-router-dom";
 import { addFav, removeFav } from "../redux/actions";
-import { connect } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
 
 
@@ -11,18 +11,22 @@ import { useEffect, useState } from "react";
       const [isFav, setFav] = useState (false);
    
       const handleFavorite = () => {
-         isFav ? removeFav(id) : addFav({id, name, status, species, gender, image, origin});
-         setFav(!isFav)
-      }
-   
-      useEffect(() => {
-         myFavorites.forEach((fav) => {
-            if (fav.id === id) {
-               setFav(true);
-            }
-         });
-      }, [id, myFavorites]);
-   
+         if (isFav) {
+            setFav(false);
+            removeFav(id);
+         } else {
+            setFav(true);
+            addFav(myFavorites);
+         }
+      };
+   //    useEffect(() => {
+   //    myFavorites.forEach((fav) => {
+   //       if (fav.id === id) {
+   //          setFav(true);
+   //       }
+   //    });
+   // }, [myFavorites]);
+   const dispatch = useDispatch();
    return (
       <div className={styles.container}>
          <div className={styles.buttonContainer}>
@@ -64,6 +68,6 @@ const mapStateToProps =(state) => {
       myFavorites: state.myFavorites
    }
 }
-export default connect (mapDispatchToProps, mapStateToProps)(Card);
+export default connect(mapDispatchToProps, mapStateToProps)(Card);
 
 
